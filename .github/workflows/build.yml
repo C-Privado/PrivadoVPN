@@ -1,12 +1,15 @@
-name: Build Java App
+name: Build Privado VPN Client (Windows)
 
 on:
   push:
+    branches: [ "main" ]
+  pull_request:
     branches: [ "main" ]
 
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -17,11 +20,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Compile project
-        run: javac *.java
+      - name: Compile Java source files
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Recurse -Filter *.java | ForEach-Object { $_.FullName }
+          javac $files
 
-      - name: Package JAR
-        run: jar cfm PrivadoVPN.jar manifest.txt *.class Privado.png
+      - name: Package JAR file
+        shell: pwsh
+        run: |
+          jar cfm PrivadoVPN.jar manifest.txt (Get-ChildItem -Recurse -Filter *.class | ForEach-Object { $_.FullName }) Privado.png
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4

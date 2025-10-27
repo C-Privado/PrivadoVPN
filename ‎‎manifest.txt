@@ -1,2 +1,2 @@
-Main-Class: src/PrivadoVPN
+Main-Class: PrivadoVPN
 Class-Path: .
